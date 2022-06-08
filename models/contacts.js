@@ -52,18 +52,11 @@ const removeContact = async (contactId) => {
 
 const addContact = async (body) => {
   try {
-    const { name, email, phone } = body;
-    if (!name || !email || !phone) {
-      throw new Error("`\x1B[31m Please, provide full information!");
-    }
-
     const contacts = await listContacts();
 
     const newContact = {
       id: v4(),
-      name,
-      email,
-      phone,
+      ...body,
     };
 
     await updateContacts([...contacts, newContact]);
@@ -93,6 +86,7 @@ const updateContact = async (contactId, body) => {
     };
 
     await updateContacts(contacts);
+
     return contacts[idx];
   } catch (error) {
     console.log(error.message);

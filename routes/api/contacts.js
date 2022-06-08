@@ -5,32 +5,64 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   const contacts = await contactOperations.listContacts();
-  res.json(contacts);
+  res.status(200).json(contacts);
 });
 
 router.get("/:contactId", async (req, res, next) => {
   const { contactId } = req.params;
   const contact = await contactOperations.getContactById(contactId);
-  res.json(contact);
+
+  if (!contact) {
+    res.status(404).json({ message: "Not found" });
+  } else {
+    res.status(200).json(contact);
+  }
 });
 
-router.post("/", async (req, res, next) => {
-  const body = req.body;
-  const addedContact = await contactOperations.addContact(body);
-  res.json(addedContact);
+router.post("/", async (req, res) => {
+  const { name, email, phone } = req.body;
+
+  if (!name || !email || !phone) {
+    res.status(400).json({ message: "missing required name field" });
+  } else {
+    const addedContact = await contactOperations.addContact({
+      name,
+      email,
+      phone,
+    });
+    res.status(201).json(addedContact);
+  }
 });
 
-router.delete("/:contactId", async (req, res, next) => {
+router.delete("/:contactId", async (req, res) => {
   const { contactId } = req.params;
-  const removedContact = await contactOperations.removeContact(contactId);
-  res.json(removedContact);
+  const deleteContact = await contactOperations.removeContact(contactId);
+
+  if (!deleteContact) {
+    res.status(404).json({ message: "Not found" });
+  } else {
+    res.status(204).json({ message: "Contact deleted" });
+  }
 });
 
-router.put("/:contactId", async (req, res, next) => {
+router.put("/:contactId", async (req, res) => {
   const { contactId } = req.params;
   const body = req.body;
-  const updatedContact = await contactOperations.updateContact(contactId, body);
-  res.json(updatedContact);
+
+  if (Object.keys(body).length === 0) {
+    res.status(400).json({ message: "missing fields" });
+  } else {
+    const updatedContact = await contactOperations.updateContact(
+      contactId,
+      body
+    );
+
+    if (!updatedContact) {
+      res.status(404).json({ message: "Not found" });
+    } else {
+      res.status(200).json(updatedContact);
+    }
+  }
 });
 
 module.exports = router;
