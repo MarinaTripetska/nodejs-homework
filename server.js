@@ -7,7 +7,7 @@ const { PORT = 3000, DB_HOST } = process.env;
 mongoose
   .connect(DB_HOST)
   .then(() => {
-    console.log("DB is working");
+    console.log("Database connection successful");
   })
   .then(() => {
     app.listen(PORT);
@@ -15,4 +15,10 @@ mongoose
   })
   .catch((error) => {
     console.log(`ERROR: ${error.message}`);
+    process.exit(1);
   });
+
+// to do:
+// валідація мейлу
+// валідація ПУТ: пусте поле, поле з іншою назвою
+// написати README

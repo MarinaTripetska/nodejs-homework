@@ -16,7 +16,7 @@ app.use((_, res, next) => {
   next({ status: 404, message: "Not found" });
 });
 
-app.use((err, _, res) => {
+app.use((err, _, res, next) => {
   const { status = 500, message = "Internal Server Error" } = err;
   res.status(status).json({ message });
 });
