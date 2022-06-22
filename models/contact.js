@@ -16,6 +16,11 @@ const schema = Schema({
     type: Boolean,
     default: false,
   },
+
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+  },
 });
 const Contact = model("contact", schema);
 
@@ -36,8 +41,29 @@ const validationSchemaCreate = Joi.object({
   favorite: Joi.bool(),
 });
 
+const validationSchemaUpdate = Joi.object({
+  name: Joi.string().min(3).max(20),
+  email: Joi.string().email({
+    minDomainSegments: 2,
+  }),
+  phone: Joi.string()
+    .min(6)
+    .pattern(
+      /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/,
+      "numbers"
+    ),
+  favorite: Joi.bool(),
+})
+  .required()
+  .min(1);
+
 const validationSchemaPatch = Joi.object({
   favorite: Joi.bool().required(),
 });
 
-module.exports = { Contact, validationSchemaCreate, validationSchemaPatch };
+module.exports = {
+  Contact,
+  validationSchemaCreate,
+  validationSchemaUpdate,
+  validationSchemaPatch,
+};

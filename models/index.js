@@ -1,7 +1,18 @@
 const {
   Contact,
   validationSchemaCreate,
+  validationSchemaUpdate,
   validationSchemaPatch,
 } = require("./contact");
 
-module.exports = { Contact, validationSchemaCreate, validationSchemaPatch };
+const { User, validationUser, validationSubscription } = require("./user");
+
+module.exports = {
+  Contact,
+  User,
+  validationUser,
+  validationSubscription,
+  validationSchemaCreate,
+  validationSchemaUpdate,
+  validationSchemaPatch,
+};

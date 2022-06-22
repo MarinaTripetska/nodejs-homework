@@ -10,33 +10,36 @@ const {
 
 const {
   validationSchemaCreate,
+  validationSchemaUpdate,
   validationSchemaPatch,
 } = require("../../models");
 
 const { validateRequest } = require("../../middlewares/validateRequest");
+const { auth } = require("../../middlewares/auth");
 
 const router = express.Router();
 
 // get all contacts:
-router.get("/", getListContacts);
+router.get("/", auth, getListContacts);
 
 // get one contact by id:
-router.get("/:contactId", getContactById);
+router.get("/:contactId", auth, getContactById);
 
 // create one contact:
-router.post("/", validateRequest(validationSchemaCreate), createContact);
+router.post("/", auth, validateRequest(validationSchemaCreate), createContact);
 
 // update one contact id id:
-router.put("/:contactId", updateContactById);
+router.put("/:contactId", auth,validateRequest(validationSchemaUpdate), updateContactById);
 
 // update field "favorite" by id:
 router.patch(
   "/:contactId/favorite",
   validateRequest(validationSchemaPatch),
+  auth,
   updateFavoriteById
 );
 
 // delete one contact by id:
-router.delete("/:contactId", deleteContactById);
+router.delete("/:contactId", auth, deleteContactById);
 
 module.exports = router;
