@@ -1,9 +1,11 @@
 const { contactsService } = require("../services");
 const { createError } = require("../errors/createError");
 
-const getListContacts = async (_, res, next) => {
+const getListContacts = async (req, res, next) => {
+  const { _id } = req.user;
+
   try {
-    const contacts = await contactsService.listContacts();
+    const contacts = await contactsService.listContacts(req.query, _id);
 
     if (!contacts) {
       throw createError(404, "Not found");
@@ -13,6 +15,7 @@ const getListContacts = async (_, res, next) => {
       status: "OK",
       code: 200,
       data: {
+        resultItems: contacts.length,
         result: contacts,
       },
     });
@@ -45,7 +48,10 @@ const getContactById = async (req, res, next) => {
 
 const createContact = async (req, res, next) => {
   try {
-    const addedContact = await contactsService.createContact(req.body);
+    const addedContact = await contactsService.createContact(
+      req.body,
+      req.user._id
+    );
     res.status(201).json({
       status: "Created",
       code: 201,

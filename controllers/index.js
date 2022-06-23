@@ -7,6 +7,14 @@ const {
   deleteContactById,
 } = require("./contacts");
 
+const {
+  registerUser,
+  loginUser,
+  logoutUser,
+  currentUser,
+  updateSubscription,
+} = require("./auth");
+
 module.exports = {
   getListContacts,
   getContactById,
@@ -14,4 +22,9 @@ module.exports = {
   updateContactById,
   updateFavoriteById,
   deleteContactById,
+  registerUser,
+  loginUser,
+  logoutUser,
+  currentUser,
+  updateSubscription,
 };
