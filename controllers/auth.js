@@ -11,6 +11,7 @@ const registerUser = async (req, res, next) => {
         user: {
           email: user.email,
           subscription: user.subscription,
+          avatarURL: user.avatarURL,
         },
       },
     });
@@ -57,10 +58,12 @@ const currentUser = async (req, res, next) => {
       user: {
         email: user.email,
         subscription: user.subscription,
+        avatarURL: user.avatarURL,
       },
     },
   });
 };
+
 const updateSubscription = async (req, res, next) => {
   const { _id } = req.user;
   try {
@@ -73,6 +76,7 @@ const updateSubscription = async (req, res, next) => {
         user: {
           email: updatedUser.email,
           subscription: updatedUser.subscription,
+          avatarURL: updatedUser.avatarURL,
         },
       },
     });

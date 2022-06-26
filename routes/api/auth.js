@@ -17,6 +17,7 @@ router.post("/login", validateRequest(validationUser), loginUser);
 router.post("/logout", auth, logoutUser);
 
 router.get("/current", auth, currentUser);
+
 router.patch(
   "/",
   auth,
