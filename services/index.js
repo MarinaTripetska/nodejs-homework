@@ -1,3 +1,11 @@
 const contactsService = require("./contact.service");
 const auth = require("./auth.service");
-module.exports = { contactsService, auth };
+const image = require("./image.service");
+const user = require("./user.service");
+
+module.exports = {
+  contactsService,
+  auth,
+  image,
+  user,
+};

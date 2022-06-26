@@ -1,4 +1,4 @@
-const { auth } = require("../services");
+const { auth, image, user } = require("../services");
 
 const registerUser = async (req, res, next) => {
   try {
@@ -74,6 +74,25 @@ const updateSubscription = async (req, res, next) => {
       code: 200,
       data: {
         user: {
+          avatarURL: updatedUser.avatarURL,
+        },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateAvatar = async (req, res, next) => {
+  const { _id: id } = req.user;
+  try {
+    const avatarURL = await image.uploadImage(id, req.file);
+    const updatedUser = await user.updateUser(id, { avatarURL });
+    res.status(200).json({
+      status: "Success",
+      code: 200,
+      data: {
+        user: {
           email: updatedUser.email,
           subscription: updatedUser.subscription,
           avatarURL: updatedUser.avatarURL,
@@ -91,4 +110,5 @@ module.exports = {
   logoutUser,
   currentUser,
   updateSubscription,
+  updateAvatar,
 };

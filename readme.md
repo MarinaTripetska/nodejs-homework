@@ -20,5 +20,8 @@ GET: 'host'/users/current
 Update user's subscription:
 PATCH: 'host'/users/
 
+Update user's avatar:
+PATCH: 'host'/users/avatars
+
 Working with contacts:
-/api/v1/contacts
+/api/v1/contacts.....
