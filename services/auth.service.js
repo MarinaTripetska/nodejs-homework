@@ -41,7 +41,6 @@ const loginUser = async ({ email, password }) => {
 const authenticateUser = async (token) => {
   try {
     const payload = jwt.verify(token, SECRET_KEY);
-
     const { id } = payload;
     return await User.findById(id);
   } catch (error) {
@@ -53,14 +52,9 @@ const logoutUser = async (id) => {
   await User.findByIdAndUpdate(id, { token: null });
 };
 
-const updateSubscription = async (id, subscription) => {
-  return await User.findByIdAndUpdate(id, { ...subscription }, { new: true });
-};
-
 module.exports = {
   registerUser,
   loginUser,
   authenticateUser,
   logoutUser,
-  updateSubscription,
 };
