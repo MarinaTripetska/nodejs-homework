@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">32.25% </span>
+                <span class="strong">31.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/31</span>
+                <span class='fraction'>11/35</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">32.25% </span>
+                <span class="strong">31.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/31</span>
+                <span class='fraction'>11/35</span>
             </div>
         
             
@@ -123,10 +123,27 @@
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
 <a name='L60'></a><a href='#L60'>60</a>
-<a name='L61'></a><a href='#L61'>61</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -141,8 +158,19 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -188,6 +216,9 @@ const { createError } = require("../errors/createError");
 const { SECRET_KEY } = require("../helpers/env");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const {
+  generateVarifycationToken,
+} = require("../helpers/generateVerifycationToken");
 &nbsp;
 const registerUser = <span class="fstat-no" title="function not covered" >as</span>ync ({ email, password }) =&gt; {
   const isExist = <span class="cstat-no" title="statement not covered" >await User.findOne({ email });</span>
@@ -197,19 +228,30 @@ const registerUser = <span class="fstat-no" title="function not covered" >as</sp
 &nbsp;
   const hashedPassword = <span class="cstat-no" title="statement not covered" >await bcrypt.hash(password, 5);</span>
 &nbsp;
-  const user = <span class="cstat-no" title="statement not covered" >await User.create({ email, password: hashedPassword });</span>
+  const verificationToken = <span class="cstat-no" title="statement not covered" >generateVarifycationToken();</span>
+  const user = <span class="cstat-no" title="statement not covered" >await User.create({</span>
+    email,
+    password: hashedPassword,
+    verificationToken,
+  });
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  return user;</span>
 };
 &nbsp;
 const loginUser = <span class="fstat-no" title="function not covered" >as</span>ync ({ email, password }) =&gt; {
   const user = <span class="cstat-no" title="statement not covered" >await User.findOne({ email });</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (user &amp;&amp; !user.verify) {</span>
+<span class="cstat-no" title="statement not covered" >    throw createError(401, "Please, confirm your email address.");</span>
+  }
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  if (!user) {</span>
-<span class="cstat-no" title="statement not covered" >    throw createError(401, "Email or password is wrong");</span>
+<span class="cstat-no" title="statement not covered" >    throw createError(401, "Email or password is wrong.");</span>
   }
 &nbsp;
   const isValid = <span class="cstat-no" title="statement not covered" >await bcrypt.compare(password, user.password);</span>
 <span class="cstat-no" title="statement not covered" >  if (!isValid) {</span>
-<span class="cstat-no" title="statement not covered" >    throw createError(401, "Email or password is wrong");</span>
+<span class="cstat-no" title="statement not covered" >    throw createError(401, "Email or password is wrong.");</span>
   }
 &nbsp;
   const payload = <span class="cstat-no" title="statement not covered" >{</span>
@@ -250,7 +292,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Fri Jul 01 2022 15:21:54 GMT+0200 (Центральная Европа, летнее время)
+                at Sat Jul 02 2022 22:19:08 GMT+0200 (Центральная Европа, летнее время)
             </div>
         <script src="../prettify.js"></script>
         <script>

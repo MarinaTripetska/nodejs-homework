@@ -1,5 +1,5 @@
 const authController = require("./auth");
-const { authService } = require("../services");
+const { authService, emailService } = require("../services");
 
 describe("Auth Controller", () => {
   describe("Register", () => {
@@ -30,6 +30,7 @@ describe("Auth Controller", () => {
       const next = jest.fn();
 
       authService.registerUser = jest.fn((data) => data);
+      emailService.sendEmail = jest.fn();
 
       const req = {
         body: {
@@ -48,6 +49,7 @@ describe("Auth Controller", () => {
       expect(result.code).toBe(201);
       expect(result.data.user.email).toBe("UserName");
       expect(result.data.user.password).toBeUndefined();
+      expect(emailService.sendEmail).toBeCalledTimes(1);
       expect(next).toBeCalledTimes(0);
     });
   });

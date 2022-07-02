@@ -17,6 +17,14 @@ const schema = Schema({
     enum: ["starter", "pro", "business"],
     default: "starter",
   },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
   token: {
     type: String,
     default: null,
@@ -35,8 +43,17 @@ const validationUser = Joi.object({
   password: Joi.string().required(),
 });
 
+const validationEmail = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 const validationSubscription = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business").required(),
 });
 
-module.exports = { User, validationUser, validationSubscription };
+module.exports = {
+  User,
+  validationUser,
+  validationSubscription,
+  validationEmail,
+};

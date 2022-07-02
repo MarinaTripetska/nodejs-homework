@@ -1,11 +1,11 @@
 const { User } = require("../models/user");
 
-const updateUser = (id, data) => {
-  return User.findByIdAndUpdate(id, data, { new: true });
+const updateUser = async (id, data) => {
+  return await User.findByIdAndUpdate(id, data, { new: true });
 };
 
-const updateSubscription = async (id, subscription) => {
-  return await User.findByIdAndUpdate(id, { ...subscription }, { new: true });
+const findUser = async (filters) => {
+  return await User.findOne(filters);
 };
 
-module.exports = { updateUser, updateSubscription };
+module.exports = { findUser, updateUser };
