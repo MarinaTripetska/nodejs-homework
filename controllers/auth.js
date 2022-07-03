@@ -1,13 +1,88 @@
-const { auth, image, user } = require("../services");
+const { authService, userService, emailService } = require("../services");
+const { createError } = require("../errors/createError");
 
 const registerUser = async (req, res, next) => {
   try {
-    const user = await auth.registerUser(req.body);
+    const user = await authService.registerUser(req.body);
 
-    res.status(201).json({
+    await emailService.sendEmail(user.email, user.verificationToken);
+
+    return res.status(201).json({
       status: "Created",
       code: 201,
       data: {
+        user: {
+          email: user.email,
+          avatarURL: user.avatarURL,
+        },
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const confirmRegistration = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await userService.findUser({ verificationToken });
+
+    if (!user) {
+      throw createError(404, "User not found");
+    }
+
+    await userService.updateUser(user._id, {
+      verify: true,
+      verificationToken: null,
+    });
+
+    return res.status(200).json({
+      status: "Success",
+      code: 200,
+      data: {
+        message: "Verification successful",
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resendConfirmationToken = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await userService.findUser({ email });
+
+    if (!user) {
+      throw createError(404, "User not found");
+    }
+    if (!user.verificationToken) {
+      throw createError(400, "Verification has already been passed");
+    }
+
+    await emailService.sendEmail(user.email, user.verificationToken);
+
+    return res.status(200).json({
+      status: "Success",
+      code: 200,
+      data: {
+        message: "Verification email sent",
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const loginUser = async (req, res, next) => {
+  try {
+    const user = await authService.loginUser(req.body);
+
+    return res.status(200).json({
+      status: "Success",
+      code: 200,
+      data: {
+        token: user.token,
         user: {
           email: user.email,
           subscription: user.subscription,
@@ -20,85 +95,10 @@ const registerUser = async (req, res, next) => {
   }
 };
 
-const loginUser = async (req, res, next) => {
-  try {
-    const user = await auth.loginUser(req.body);
-    console.log(user);
-    res.status(200).json({
-      status: "Success",
-      code: 200,
-      data: {
-        token: user.token,
-        user: {
-          email: user.email,
-          subscription: user.subscription,
-        },
-      },
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-
 const logoutUser = async (req, res, next) => {
   try {
-    await auth.logoutUser(req.user._id);
+    await authService.logoutUser(req.user._id);
     res.sendStatus(204);
-  } catch (error) {
-    next(error);
-  }
-};
-
-const currentUser = async (req, res, next) => {
-  const user = req.user;
-  res.status(200).json({
-    status: "Success",
-    code: 200,
-    data: {
-      user: {
-        email: user.email,
-        subscription: user.subscription,
-        avatarURL: user.avatarURL,
-      },
-    },
-  });
-};
-
-const updateSubscription = async (req, res, next) => {
-  const { _id } = req.user;
-  try {
-    const updatedUser = await auth.updateSubscription(_id, req.body);
-
-    res.status(200).json({
-      status: "Success",
-      code: 200,
-      data: {
-        user: {
-          avatarURL: updatedUser.avatarURL,
-        },
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const updateAvatar = async (req, res, next) => {
-  const { _id: id } = req.user;
-  try {
-    const avatarURL = await image.uploadImage(id, req.file);
-    const updatedUser = await user.updateUser(id, { avatarURL });
-    res.status(200).json({
-      status: "Success",
-      code: 200,
-      data: {
-        user: {
-          email: updatedUser.email,
-          subscription: updatedUser.subscription,
-          avatarURL: updatedUser.avatarURL,
-        },
-      },
-    });
   } catch (error) {
     next(error);
   }
@@ -106,9 +106,8 @@ const updateAvatar = async (req, res, next) => {
 
 module.exports = {
   registerUser,
+  confirmRegistration,
+  resendConfirmationToken,
   loginUser,
   logoutUser,
-  currentUser,
-  updateSubscription,
-  updateAvatar,
 };

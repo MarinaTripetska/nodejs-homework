@@ -1,32 +1,9 @@
-const {
-  getListContacts,
-  getContactById,
-  createContact,
-  updateContactById,
-  updateFavoriteById,
-  deleteContactById,
-} = require("./contacts");
-
-const {
-  registerUser,
-  loginUser,
-  logoutUser,
-  currentUser,
-  updateSubscription,
-  updateAvatar,
-} = require("./auth");
+const contacts = require("./contacts");
+const auth = require("./auth");
+const user = require("./user");
 
 module.exports = {
-  getListContacts,
-  getContactById,
-  createContact,
-  updateContactById,
-  updateFavoriteById,
-  deleteContactById,
-  registerUser,
-  loginUser,
-  logoutUser,
-  currentUser,
-  updateSubscription,
-  updateAvatar,
+  contacts,
+  auth,
+  user,
 };

@@ -1,7 +1,11 @@
 const { User } = require("../models/user");
 
-const updateUser = (id, data) => {
-  return User.findByIdAndUpdate(id, data, { new: true });
+const updateUser = async (id, data) => {
+  return await User.findByIdAndUpdate(id, data, { new: true });
 };
 
-module.exports = { updateUser };
+const findUser = async (filters) => {
+  return await User.findOne(filters);
+};
+
+module.exports = { findUser, updateUser };

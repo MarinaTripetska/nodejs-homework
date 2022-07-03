@@ -3,19 +3,27 @@ const Joi = require("joi");
 const gravatar = require("gravatar");
 
 const schema = Schema({
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-  },
   email: {
     type: String,
     required: [true, "Email is required"],
     unique: true,
   },
+  password: {
+    type: String,
+    required: [true, "Password is required"],
+  },
   subscription: {
     type: String,
     enum: ["starter", "pro", "business"],
     default: "starter",
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
+  verify: {
+    type: Boolean,
+    default: false,
   },
   token: {
     type: String,
@@ -35,8 +43,17 @@ const validationUser = Joi.object({
   password: Joi.string().required(),
 });
 
+const validationEmail = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 const validationSubscription = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business").required(),
 });
 
-module.exports = { User, validationUser, validationSubscription };
+module.exports = {
+  User,
+  validationUser,
+  validationSubscription,
+  validationEmail,
+};

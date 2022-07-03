@@ -1,5 +1,5 @@
 const { createError } = require("../errors/createError");
-const { auth: authService } = require("../services");
+const { authService } = require("../services");
 
 const auth = async (req, _, next) => {
   const { authorization = "" } = req.headers;
